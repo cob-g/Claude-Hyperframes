@@ -1,0 +1,38 @@
+{
+  "title": "White minimal reel",
+  "source": { "video": "assets/cut.mp4", "transcript": "assets/cut.json" },
+  "talkingHead": { "focusX": 0.5, "focusY": 0.38, "punchIn": 1.16 },
+  "captions": { "hookEnd": 2.0 },
+  "scenes": [
+    {
+      "id": "habits",
+      "start": 2.0,
+      "end": 5.4,
+      "exit": "push",
+      "object": { "src": "assets/objects/hero-one.png", "x": 540, "y": 1000, "w": 640, "rotate": -4, "motion": "settle", "light": { "x": "-25%", "y": "-35%" } },
+      "depth": [
+        { "src": "assets/objects/prop-a.png", "x": 150, "y": 170, "w": 560, "rotate": 30, "blur": 10, "dx": -30, "dr": -3 },
+        { "src": "assets/objects/prop-b.png", "x": 940, "y": 1790, "w": 540, "rotate": -18, "blur": 12, "dx": 26, "dr": 2 }
+      ],
+      "words": [
+        { "text": "small", "match": "small", "role": "small", "x": 540, "y": 560, "size": 60 },
+        { "text": "Habits", "match": "habits", "role": "hero", "layer": "back", "x": 540, "y": 700, "size": 250 },
+        { "text": "compound", "match": "compound", "role": "script", "layer": "back", "x": 540, "y": 1010, "size": 220, "width": 1200 },
+        { "text": "every single day", "match": "every", "role": "small", "classes": ["dim"], "x": 540, "y": 1360, "size": 54 }
+      ]
+    },
+    {
+      "id": "effort",
+      "start": 5.4,
+      "end": 8.6,
+      "object": { "src": "assets/objects/hero-two.png", "x": 900, "y": 1060, "w": 760, "rotate": -12, "motion": "slide" },
+      "stroke": { "type": "sweep", "d": "M 1000 180 C 700 420, 380 520, 240 900 S 300 1500, 60 1760", "width": 240, "at": 0.35 },
+      "words": [
+        { "text": "it takes", "match": "takes", "role": "small", "anchor": "left", "x": 80, "y": 640, "size": 58 },
+        { "text": "quiet", "match": "quiet", "role": "script", "classes": ["gold", "solid"], "anchor": "left", "x": 60, "y": 780, "size": 170 },
+        { "text": "Effort", "match": "effort", "role": "hero", "anchor": "left", "x": 80, "y": 950, "size": 300, "width": 640 },
+        { "text": "nobody sees", "match": "nobody", "role": "script", "layer": "back", "anchor": "left", "x": 60, "y": 1200, "size": 150 }
+      ]
+    }
+  ]
+}
