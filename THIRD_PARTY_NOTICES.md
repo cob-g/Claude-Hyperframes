@@ -13,6 +13,12 @@ brand assets remain unchanged; their inclusion does not grant third-party rights
   node_modules/gsap and https://gsap.com/community/standard-license/.
 - Some library styles reference Google Fonts. Font licenses remain with their
   publishers. Install and preserve applicable licenses when localizing fonts.
+- The white-minimal-reel skill bundles Anton, Familjen Grotesk, and Pinyon Script
+  (SIL Open Font License 1.1) in its assets/fonts folder, each with its license file.
+- The ip-17-pro-style skill bundles Latin subsets of Montserrat and Inter (SIL Open Font
+  License 1.1) in its assets/fonts folder, each with its license file. Its builder bundles
+  three.js (MIT) from node_modules into each project, keeps the copyright header in the
+  bundle, and copies the full license to the project's ip/THREE-LICENSE.txt.
 - Vox, Kallaway, and Infinite are aesthetic reference names. These templates are
   not official brand assets or endorsed by those creators or organizations.
 

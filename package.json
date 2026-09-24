@@ -26,8 +26,10 @@
     "node": ">=22"
   },
   "devDependencies": {
-    "hyperframes": "0.7.109",
+    "esbuild": "0.25.12",
     "gsap": "3.14.2",
-    "playwright": "^1.59.1"
+    "hyperframes": "0.7.109",
+    "playwright": "^1.59.1",
+    "three": "0.186.0"
   }
 }

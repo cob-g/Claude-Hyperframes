@@ -140,20 +140,44 @@ for (const s of scenes) {
 }
 
 // ---------------------------------------------------------------- captions over footage
-const cap = { enabled: true, maxWords: 3, maxDuration: 1.5, gap: 0.3, hookEnd: 0, ...(plan.captions || {}) };
+const cap = { enabled: true, maxWords: 3, maxDuration: 1.5, gap: 0.3, hookEnd: 0, hookHold: 0.5, ...(plan.captions || {}) };
 const inScene = t => scenes.some(s => t >= s.start - 0.02 && t < s.end);
 const sceneStartAfter = t => Math.min(D, ...scenes.filter(s => s.start >= t).map(s => s.start));
 const visible = cap.enabled ? words.filter(w => !inScene((w.start + w.end) / 2)) : [];
+
+// Display text: optional word replacements (for example softened profanity) and punctuation
+// stripping. Timing and matching always use the transcript's own words.
+const replaceMap = Object.fromEntries(Object.entries(cap.replace || {}).map(([k, v]) => [norm(k), String(v)]));
+function display(text) {
+  let [, lead, core, trail] = String(text).match(/^([^A-Za-z0-9']*)(.*?)([^A-Za-z0-9']*)$/) || ["", "", String(text), ""];
+  const rep = replaceMap[norm(core)];
+  if (rep) core = /^[A-Z]/.test(core) ? rep[0].toUpperCase() + rep.slice(1) : rep;
+  if (cap.stripPunctuation) { lead = lead.replace(/["“”]/g, ""); trail = trail.replace(/["“”.,;:!]/g, ""); }
+  return lead + core + trail;
+}
+// Per-word caption styling: [{ match, from?, to?, em?, class?, size? }]; later rules win.
+function styleFor(w) {
+  const out = {};
+  for (const rule of cap.style || []) {
+    if (norm(rule.match) !== norm(w.text)) continue;
+    if (rule.from != null && w.start < rule.from) continue;
+    if (rule.to != null && w.start >= rule.to) continue;
+    Object.assign(out, rule);
+  }
+  return out;
+}
+const maxWordsAt = t => (cap.windows || []).find(win => t >= win.from && t < win.to && win.maxWords)?.maxWords ?? cap.maxWords;
 
 const hookWords = visible.filter(w => w.start < cap.hookEnd);
 const lineWords = visible.filter(w => w.start >= cap.hookEnd);
 const groups = [];
 for (const w of lineWords) {
   const g = groups[groups.length - 1];
-  const breakHere = !g || g.words.length >= cap.maxWords || w.start - g.words.at(-1).end > cap.gap ||
+  const em = !!styleFor(w).em;
+  const breakHere = !g || em || g.em || g.words.length >= maxWordsAt(w.start) || w.start - g.words.at(-1).end > cap.gap ||
     w.end - g.words[0].start > cap.maxDuration || /[.,!?;:]$/.test(g.words.at(-1).text) ||
     sceneStartAfter(g.words.at(-1).end) < w.start;
-  if (breakHere) groups.push({ words: [w] }); else g.words.push(w);
+  if (breakHere) groups.push({ words: [w], em }); else g.words.push(w);
 }
 groups.forEach((g, i) => {
   g.start = r3(Math.max(0, g.words[0].start - 0.04));
@@ -161,40 +185,67 @@ groups.forEach((g, i) => {
   let end = g.words.at(-1).end + 0.35;
   if (next && next.words[0].start - 0.04 - g.words.at(-1).end < 0.6) end = next.words[0].start - 0.04;
   g.end = r3(Math.min(end, sceneStartAfter(g.words[0].start), D));
-  g.text = g.words.map(w => w.text).join(" ");
+  g.text = g.words.map(w => display(w.text)).join(" ");
+  g.html = g.words.map(w => {
+    const c = styleFor(w).class;
+    return c ? `<span class="${esc(c)}">${esc(display(w.text))}</span>` : esc(display(w.text));
+  }).join(" ");
 });
 
-// Hook: the opening phrase accumulates in a stacked, mixed-scale layout.
+// Hook: the opening phrase accumulates in stacked, mixed-scale layouts. `hookBreaks` starts a
+// fresh stack at those times (one stack per sentence reads better than a tall pile).
 const SMALL = new Set(["a", "an", "the", "to", "of", "and", "or", "i", "i'm", "i've", "im", "ive", "it", "is", "in", "on", "at", "my", "me", "we", "you", "so", "but", "for", "with", "that", "this", "be", "are", "was", "when", "what", "just", "they", "them", "their"]);
-const hook = [];
+const hookStacks = [];
 if (hookWords.length) {
-  const items = hookWords.map((w, i) => {
-    const big = !SMALL.has(norm(w.text)) && norm(w.text).length > 2;
-    const size = big ? 104 : 62;
-    return { ...w, key: `hw-${i + 1}`, size, width: w.text.length * size * 0.5 };
-  });
-  const rows = [];
-  for (const it of items) {
-    const row = rows[rows.length - 1];
-    if (row && row.items.length < 2 && row.width + it.width < 700 && !(row.items[0].size > 90 && it.size > 90)) {
-      row.items.push(it); row.width += it.width + 18;
-    } else rows.push({ items: [it], width: it.width });
-  }
-  const offsets = [40, -70, 80, -40, 60, -60];
-  let y = 0;
-  rows.forEach((row, r) => {
-    const h = Math.max(...row.items.map(i => i.size)) * 0.86;
-    let x = W / 2 - row.width / 2 + offsets[r % offsets.length];
-    for (const it of row.items) {
-      hook.push({ ...it, x: r2(Math.max(70, Math.min(W - 70 - it.width, x))), y: r2(y + h - it.size * 0.86) });
-      x += it.width + 18;
+  const breaks = [...(cap.hookBreaks || [])].sort((a, b) => a - b);
+  const parts = [];
+  for (const w of hookWords) (parts[breaks.filter(b => w.start >= b).length] ||= []).push(w);
+  const list = parts.filter(Boolean);
+  list.forEach((ws, si) => {
+    const items = ws.map((w, i) => {
+      const st = styleFor(w);
+      const text = display(w.text);
+      const big = !SMALL.has(norm(w.text)) && norm(w.text).length > 2;
+      const size = st.size || (big ? 104 : 62);
+      const script = /script/.test(st.class || "");
+      return { ...w, text, cls: st.class || "", brk: !!st.break, script, key: `hw-${si + 1}-${i + 1}`, size,
+        width: text.length * size * (script ? 0.42 : 0.5) };
+    });
+    // Rows hold up to hookRowMax words; two large words share a row only with hookBigPairs;
+    // a style rule with `break: true` starts a new row at that word.
+    const rowMax = cap.hookRowMax || 2;
+    const rows = [];
+    for (const it of items) {
+      const row = rows[rows.length - 1];
+      const bigPair = row && row.items.some(i => i.size > 90) && it.size > 90 && !cap.hookBigPairs;
+      if (row && !it.brk && row.items.length < rowMax && row.width + it.width < 760 && !bigPair) {
+        row.items.push(it); row.width += it.width + 18;
+      } else rows.push({ items: [it], width: it.width });
     }
-    y += h;
+    const offsets = [40, -70, 80, -40, 60, -60];
+    const stack = [];
+    let y = 0;
+    rows.forEach((row, r) => {
+      const h = Math.max(...row.items.map(i => i.size * 0.86));
+      let x = W / 2 - row.width / 2 + offsets[r % offsets.length];
+      for (const it of row.items) {
+        stack.push({ ...it, x: r2(Math.max(70, Math.min(W - 70 - it.width, x))), y: r2(y + h - it.size * 0.86) });
+        x += it.width + 18;
+      }
+      // Script faces hang long descenders; leave room under their row.
+      y += h + Math.max(0, ...row.items.filter(i => i.script).map(i => i.size * 0.38));
+    });
+    stack.start = r3(Math.max(0, ws[0].start - 0.04));
+    stack.top = r2((cap.hookBottom ?? 1640) - y);
+    stack.lastEnd = ws.at(-1).end;
+    hookStacks.push(stack);
   });
-  hook.start = r3(Math.max(0, hookWords[0].start - 0.04));
-  hook.end = r3(Math.min(sceneStartAfter(hookWords[0].start), groups[0]?.start ?? D, hookWords.at(-1).end + 0.5, D));
-  hook.top = r2(1640 - y);
+  hookStacks.forEach((stack, i) => {
+    const next = hookStacks[i + 1];
+    stack.end = r3(next ? next.start : Math.min(sceneStartAfter(stack.start), groups[0]?.start ?? D, stack.lastEnd + cap.hookHold, D));
+  });
 }
+const hookCount = hookStacks.reduce((n, s) => n + s.length, 0);
 
 // ---------------------------------------------------------------- talking-head framing
 const th = { hookBlurIn: 0.6, returnSettle: 0.28, focusX: 0.5, focusY: 0.38, punchIn: 1.16, ...(plan.talkingHead || {}) };
@@ -210,6 +261,33 @@ for (const s of [...scenes, { start: D, end: D }]) {
   if (s.start - t0 > 0.05) segments.push({ start: r3(t0), end: r3(s.start), scale: th.framing?.[k]?.scale ?? (k % 2 ? th.punchIn : 1), first: t0 === 0 });
   if (s.start - t0 > 0.05) k++;
   t0 = Math.max(t0, s.end);
+}
+// Extra framing keys inside footage, [{ at, scale, duration = 0, ease }]: zero duration is a
+// cut to the new scale (a jump zoom on an emphasis word); otherwise the scale eases over time.
+const thKeys = (th.keys || []).map(key => ({ ...key, at: r3(key.at) })).sort((a, b) => a.at - b.at);
+for (const key of thKeys) {
+  const seg = segments.find(sg => key.at >= sg.start - 0.001 && key.at < sg.end);
+  if (!seg) { warn(`talkingHead key at ${key.at}s is not on footage; ignored.`); continue; }
+  if (!seg.first && key.at - seg.start < th.returnSettle) warn(`talkingHead key at ${key.at}s overlaps the return settle.`);
+  const prev = thKeys.filter(q => q.at < key.at && q.at >= seg.start).at(-1);
+  key.from = prev ? prev.scale : seg.scale;
+}
+
+// Sound effects: [{ src, at, volume }], each on its own free track from 10 upward.
+const sfx = [];
+{
+  const trackFree = [];
+  (plan.sfx || []).forEach((e, i) => {
+    const file = resolve(project, e.src || "");
+    if (!e.src || !existsSync(file)) { fail(`sfx ${i + 1}: missing ${e.src}`); return; }
+    const pr = spawnSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", file], { encoding: "utf8" });
+    const dur = r3(Math.min(Number(pr.stdout.trim()) || 0, D - e.at));
+    if (!(dur > 0)) { warn(`sfx ${i + 1} at ${e.at}s has no room before the end; skipped.`); return; }
+    let track = trackFree.findIndex(t => t <= e.at);
+    if (track < 0) track = trackFree.length;
+    trackFree[track] = e.at + dur + 0.01;
+    sfx.push({ id: `sfx-${i + 1}`, src: e.src, at: r3(e.at), dur, volume: e.volume ?? 0.5, track: 10 + track });
+  });
 }
 
 // ---------------------------------------------------------------- emit root composition
@@ -232,7 +310,9 @@ function rootHtml() {
     `  </div>`,
     `  <audio id="th-audio" src="${esc(src.video)}" data-start="0" data-duration="${D}" data-track-index="1" data-volume="${plan.voiceVolume ?? 1}"></audio>`);
   if (plan.music?.src) lines.push(`  <audio id="music" src="${esc(plan.music.src)}" data-start="0" data-duration="${D}" data-track-index="2" data-volume="${plan.music.volume ?? 0.12}"></audio>`);
-  if (hook.length || groups.length)
+  for (const e of sfx)
+    lines.push(`  <audio id="${e.id}" src="${esc(e.src)}" data-start="${e.at}" data-duration="${e.dur}" data-track-index="${e.track}" data-volume="${e.volume}"></audio>`);
+  if (hookCount || groups.length)
     lines.push(`  <div id="captions" class="wm-cap-host" data-composition-id="wm-captions" data-composition-src="compositions/wm-captions.html" data-start="0" data-duration="${D}" data-track-index="3" data-width="${W}" data-height="${H}"></div>`);
   for (const s of scenes)
     lines.push(`  <div id="s-${s.id}" class="wm-scene-host" data-composition-id="wm-${s.id}" data-composition-src="compositions/wm-${s.id}.html" data-start="${s.start}" data-duration="${s.dur}" data-track-index="5" data-width="${W}" data-height="${H}"></div>`);
@@ -246,6 +326,11 @@ function rootHtml() {
       js.push(`tl.fromTo(wrap, { scale: ${r3(seg.scale * 1.03)}, filter: "blur(5px)" }, { scale: ${seg.scale}, filter: "blur(0px)", duration: ${th.returnSettle}, ease: "power2.out" }, ${seg.start});`);
     else js.push(`tl.set(wrap, { scale: ${seg.scale}, filter: "blur(0px)" }, ${seg.start});`);
   }
+  for (const key of thKeys) {
+    if (key.from == null) continue;
+    if (!key.duration) js.push(`tl.set(wrap, { scale: ${key.scale} }, ${key.at});`);
+    else js.push(`tl.fromTo(wrap, { scale: ${key.from} }, { scale: ${key.scale}, duration: ${key.duration}, ease: "${key.ease || "power3.out"}", immediateRender: false }, ${key.at});`);
+  }
   js.push(`window.__timelines = window.__timelines || {};`, `window.__timelines["main"] = tl;`);
   lines.push(`  <script>`, ...js.map(l => `    ${l}`), `  </script>`, `</div>`, `</body></html>`);
   return lines.join("\n") + "\n";
@@ -255,18 +340,24 @@ function rootHtml() {
 function captionsHtml() {
   const body = [];
   const js = [`var tl = gsap.timeline({ paused: true });`];
-  if (hook.length) {
-    body.push(`    <div id="hook" class="clip wm-hook" style="top:${hook.top}px" data-start="${hook.start}" data-duration="${r3(hook.end - hook.start)}" data-track-index="1">`);
-    for (const h of hook) {
-      body.push(`      <span class="hw" id="${h.key}" style="left:${h.x}px;top:${h.y}px;font-size:${h.size}px">${esc(h.text)}</span>`);
-      js.push(`tl.fromTo("#${h.key}", { opacity: 0, y: 22, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.32, ease: "power3.out" }, ${r3(Math.max(hook.start, h.start - 0.04))});`);
+  hookStacks.forEach((stack, si) => {
+    body.push(`    <div id="hook-${si + 1}" class="clip wm-hook" style="top:${stack.top}px" data-start="${stack.start}" data-duration="${r3(stack.end - stack.start)}" data-track-index="1">`);
+    for (const h of stack) {
+      body.push(`      <span class="hw${h.cls ? ` ${esc(h.cls)}` : ""}" id="${h.key}" style="left:${h.x}px;top:${h.y}px;font-size:${h.size}px">${esc(h.text)}</span>`);
+      js.push(`tl.fromTo("#${h.key}", { opacity: 0, y: 22, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.32, ease: "power3.out" }, ${r3(Math.max(stack.start, h.start - 0.04))});`);
     }
     body.push(`    </div>`);
-  }
+  });
   groups.forEach((g, i) => {
     if (g.end - g.start < 0.08) return;
     g.id = `cap-${i + 1}`;
-    body.push(`    <div id="${g.id}" class="clip wm-cap" data-start="${g.start}" data-duration="${r3(g.end - g.start)}" data-track-index="0">${esc(g.text)}</div>`);
+    if (g.em) {
+      // Emphasis: one word in the hero face, punched in with a defocus.
+      body.push(`    <div id="${g.id}" class="clip wm-cap em" data-start="${g.start}" data-duration="${r3(g.end - g.start)}" data-track-index="0"><span class="wm-cap-t">${g.html}</span></div>`);
+      js.push(`tl.fromTo("#${g.id}", { opacity: 0, scale: 1.28, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.34, ease: "power3.out" }, ${g.start});`);
+      return;
+    }
+    body.push(`    <div id="${g.id}" class="clip wm-cap" data-start="${g.start}" data-duration="${r3(g.end - g.start)}" data-track-index="0">${g.html}</div>`);
     js.push(`tl.fromTo("#${g.id}", { opacity: 0, y: 24, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, ${g.start});`);
   });
   js.push(`window.__timelines = window.__timelines || {};`, `window.__timelines["wm-captions"] = tl;`);
@@ -348,8 +439,9 @@ function sceneHtml(s, seed) {
   const js = [];
   js.push(`var root = document.getElementById("wm-${id}-root");`, `WM.prepare(root);`, `var tl = gsap.timeline({ paused: true });`,
     `var cam = document.getElementById("wm-${id}-cam");`);
-  if (s.enter === "push") js.push(`WM.camPushIn(tl, cam, 0, ${JSON.stringify(s.camera || {})});`);
-  else js.push(`WM.camIntro(tl, cam, 0, ${JSON.stringify(s.camera || {})});`);
+  const camOpts = JSON.stringify({ ...(s.camera || {}), hold: s.dur });
+  if (s.enter === "push") js.push(`WM.camPushIn(tl, cam, 0, ${camOpts});`);
+  else js.push(`WM.camIntro(tl, cam, 0, ${camOpts});`);
   const allObjects = [s.object ? { o: s.object, el: "obj" } : null, ...(s.objects || []).map((o, i) => ({ o, el: `obj${i + 2}` }))].filter(Boolean);
   for (const { o, el } of allObjects) {
     const motion = o.motion || "settle";
@@ -440,13 +532,13 @@ if (existsSync(rootFile) && !readFileSync(rootFile, "utf8").includes(GENERATED))
 }
 writeFileSync(rootFile, html);
 for (const [file, content] of sceneFiles) writeFileSync(file, content);
-if (hook.length || groups.length) writeFileSync(join(project, "compositions", "wm-captions.html"), captionsHtml());
+if (hookCount || groups.length) writeFileSync(join(project, "compositions", "wm-captions.html"), captionsHtml());
 const design = join(project, "DESIGN.md");
 if (!existsSync(design) || !readFileSync(design, "utf8").includes(GENERATED)) {
   if (existsSync(design)) console.log(`Archived previous DESIGN.md -> ${archive(design)}`);
   writeFileSync(design, designMd());
 }
 
-console.log(`Built ${relative(process.cwd(), project) || "."}: ${D}s, ${scenes.length} scenes, ${groups.filter(g => g.id).length} caption groups${hook.length ? `, ${hook.length}-word hook stack` : ""}.`);
+console.log(`Built ${relative(process.cwd(), project) || "."}: ${D}s, ${scenes.length} scenes, ${groups.filter(g => g.id).length} caption groups${hookCount ? `, ${hookCount}-word hook in ${hookStacks.length} stack(s)` : ""}${sfx.length ? `, ${sfx.length} sfx` : ""}.`);
 for (const s of scenes) console.log(`  ${s.id.padEnd(16)} ${s.start.toFixed(2)}-${s.end.toFixed(2)}s  in:${s.enter} out:${s.exit}  words:${s.words.map(w => `${w.text}@${(s.start + w.local).toFixed(2)}`).join(" ")}`);
 done();

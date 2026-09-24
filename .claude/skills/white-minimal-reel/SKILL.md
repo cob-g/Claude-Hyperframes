@@ -23,6 +23,8 @@ mix. This skill supplies the look, the scene grammar, and the motion system. Rea
    (`assets/cut.mp4`) with a keyframe every second before designing anything:
    `ffmpeg -i <edit> -c:v libx264 -r 30 -g 30 -keyint_min 30 -crf 16 -c:a aac assets/cut.mp4`.
    Sparse keyframes freeze footage in renders; the build warns when it finds them.
+   A source with captions or stickers burned in needs cleaning first; follow
+   [references/source-cleanup.md](references/source-cleanup.md).
 2. **Transcribe that cut locally**: `npm run transcribe:local -- video-projects/<slug>/assets/cut.mp4`.
    Every scene word and caption is timed from this file. Never time against the uncut source.
 3. **Choose the scene beats.** Read the transcript and mark 3-5 lines per 40 seconds that carry
@@ -99,9 +101,11 @@ These rules come from the measured reference. Break them only when the brief say
 12. **Captions over footage:** compact grotesk 600, 80 px, off-white, centered at y 1370.
     Groups of one to three words, at most 1.5 s, rise and defocus in over 0.3 s, and swap
     without exit animations. The opening line can stack word by word in mixed sizes.
+    A few emphasis words may stand alone in the hero face (`captions.style` with `em`).
 13. **Returns to the face** are near-hard cuts: a 0.28 s micro-settle (this satisfies the
     HyperFrames no-jump-cut rule and still reads as a cut). Alternate a 1.16-1.18x punch-in
-    between returns so a single camera feels like several angles.
+    between returns so a single camera feels like several angles. `talkingHead.keys` adds
+    snap zooms on emphasis words and a slow push through the final line.
 
 | Setting | Value |
 | --- | --- |
@@ -121,7 +125,9 @@ To use licensed originals, see the font section of
 
 ## Gates before delivery
 
-1. `npx hyperframes lint` has no errors. A dense caption-track warning is expected.
+1. `npx hyperframes lint` has no errors. A dense caption-track warning is expected. The kit
+   preflight reports `root_data_start_conflicts_with_video` for the generated root; HyperFrames
+   exempts composition roots from that rule, and gate 3 proves the footage plays at full rate.
 2. Snapshot every scene's hero frame and one frame per caption layout:
    `npx hyperframes snapshot --at <times> --no-end`. Check word order, overlaps you did not
    intend, readable small type at phone size, and that no word appears before it is spoken.
@@ -147,6 +153,8 @@ To use licensed originals, see the font section of
 - [scripts/fetch-object.mjs](scripts/fetch-object.mjs) finds PD/CC0 objects and records provenance.
 - [scripts/cutout.swift](scripts/cutout.swift) lifts objects with Apple Vision.
 - [scripts/motion-audit.mjs](scripts/motion-audit.mjs) checks posterize and footage cadence.
+- [references/source-cleanup.md](references/source-cleanup.md) removes burned-in captions
+  and caption bars, and reuses the old captions as word timings.
 - [assets/wm-kit.css](assets/wm-kit.css) and [assets/wm-kit.js](assets/wm-kit.js) are the
   look and motion runtime copied into each project.
 - [assets/fonts/](assets/fonts/) holds the bundled OFL fonts and their licenses, declared with

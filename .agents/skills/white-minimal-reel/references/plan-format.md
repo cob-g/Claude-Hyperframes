@@ -23,16 +23,40 @@ project. Times are seconds on the cut video's timeline. Unknown fields are ignor
     "punchIn": 1.16,                     // scale used on alternate face segments
     "framing": [{ "scale": 1 }, { "scale": 1.2 }],  // optional per-segment scale override
     "hookBlurIn": 0.6,                   // seconds; 0 = none
-    "returnSettle": 0.28                 // seconds; 0 = hard cut back to the face
+    "returnSettle": 0.28,                // seconds; 0 = hard cut back to the face
+    "keys": [                            // optional extra framing on footage
+      { "at": 15.4, "scale": 1.18, "duration": 0.14 },    // snap zoom on an emphasis word
+      { "at": 34.6, "scale": 1.0 },                        // duration 0 = cut to a new scale
+      { "at": 36.2, "scale": 1.34, "duration": 2.6, "ease": "none" }  // slow push
+    ]
   },
   "captions": {
     "enabled": true,
     "hookEnd": 2.1,                      // words before this stack in the hook layout
-    "maxWords": 3, "maxDuration": 1.5, "gap": 0.3
+    "hookBreaks": [1.6],                 // optional: start a fresh hook stack at these times
+    "hookHold": 0.5,                     // seconds the last stack stays after its last word
+    "hookBottom": 1640,                  // y of the hook stack's bottom edge
+    "hookRowMax": 2, "hookBigPairs": false,   // words per hook row; allow two large words in a row
+    "maxWords": 3, "maxDuration": 1.5, "gap": 0.3,
+    "windows": [{ "from": 36, "to": 40, "maxWords": 2 }],   // optional per-window group size
+    "stripPunctuation": false,           // drop . , ; : ! and quotes from displayed words
+    "replace": { "fucking": "f*cking" }, // displayed spelling per word; timing is unchanged
+    "style": [                           // per-word rules (later rules win); from/to are optional
+      { "match": "crazy", "em": true },                    // its own caption in the hero face
+      { "match": "influencer", "to": 4.8, "class": "script", "size": 140 },  // hook word style
+      { "match": "on", "to": 4.8, "break": true }         // start a new hook row here
+    ]
   },
+  "sfx": [                               // optional; each clip gets a free audio track
+    { "src": "assets/sfx/whoosh-in.wav", "at": 8.49, "volume": 0.32 }
+  ],
   "scenes": [ /* see below */ ]
 }
 ```
+
+Keep the talking-head `focusY` on the caption line when the source has burned-in captions you
+removed: punch-ins then scale around that line, so the new captions keep covering any
+inpainting residue. Emphasis captions use `--wm-cap-em-size` and `--wm-cap-em-gradient`.
 
 ## Scene
 
@@ -88,7 +112,8 @@ project. Times are seconds on the cut video's timeline. Unknown fields are ignor
   inside the scene window, else anywhere in the window. Reveals start two frames early but
   never before 0.12 s into the scene.
 - Captions are built from transcript words outside every scene, grouped by pause, punctuation,
-  `maxWords`, and `maxDuration`, and never overlap a scene.
-- Face segments alternate `1` and `punchIn` scale unless `framing` overrides them.
+  `maxWords`, and `maxDuration`, and never overlap a scene. An `em` word always stands alone.
+- Face segments alternate `1` and `punchIn` scale unless `framing` overrides them. `keys` then
+  change the scale inside a segment; keep them clear of the 0.28 s return settle.
 - A scene that follows another with `exit: "push"` enters with a push automatically.
 - Every run copies the current kit into `wm/`, so rebuilding picks up kit fixes.

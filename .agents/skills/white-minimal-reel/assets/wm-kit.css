@@ -1,0 +1,300 @@
+/* White Minimal Reel kit: the look layer for animation scenes and talking-head captions.
+   Values are measured from the reference breakdown (references/reference-breakdown.md) and
+   expressed at 1080x1920. Override any token per project in index.html or a scene. */
+
+/* Bundled OFL fonts (licenses in fonts/). Declared here so scenes never depend on the
+   compiler discovering fonts that are only used inside timed sub-compositions. */
+@font-face { font-family: "Anton"; src: url("fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; }
+@font-face { font-family: "Pinyon Script"; src: url("fonts/PinyonScript-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; }
+@font-face { font-family: "Familjen Grotesk"; src: url("fonts/FamiljenGrotesk-VF.ttf") format("truetype"); font-weight: 400 700; font-style: normal; }
+@font-face { font-family: "Familjen Grotesk"; src: url("fonts/FamiljenGrotesk-Italic-VF.ttf") format("truetype"); font-weight: 400 700; font-style: italic; }
+
+:root {
+  /* Type. OFL stand-ins chosen by side-by-side comparison; see references/ae-to-hyperframes.md */
+  --wm-font-hero: "Anton", sans-serif;              /* heavy compressed display */
+  --wm-font-text: "Familjen Grotesk", sans-serif;   /* compact retro grotesk: small lines + captions */
+  --wm-font-script: "Pinyon Script", cursive;       /* formal copperplate script */
+
+  /* Paper-and-shadow palette (pre-grade values; vignette and blinds darken them on screen) */
+  --wm-base: #c4b9ad;
+  --wm-c1: #e2d9ce;   /* top-left light */
+  --wm-c2: #b9ada1;   /* top-right mid */
+  --wm-c3: #d2c2b1;   /* bottom-left warm */
+  --wm-c4: #958a80;   /* bottom-right shade */
+
+  /* Text gradients (top -> bottom of each glyph box) */
+  --wm-gold-top: #957838;
+  --wm-gold-bottom: #2b2210;
+  --wm-ink-top: #5a544e;
+  --wm-ink-bottom: #161412;
+  --wm-ghost-top: #77716b;
+  --wm-ghost-bottom: #3f3a36;
+
+  /* Finishing */
+  --wm-vignette: 0.42;
+  --wm-edge-blur: 9px;
+  --wm-grain: 0.13;
+
+  /* Captions over footage */
+  --wm-cap-color: #efe9e2;
+  --wm-cap-size: 80px;
+  --wm-cap-y: 1370px;
+  --wm-cap-em-size: 150px;
+  --wm-cap-em-gradient: linear-gradient(180deg, #f7eedd 12%, #d6b77e 92%);
+}
+
+/* ---------- Scene root ---------- */
+.wm-scene {
+  position: absolute;
+  inset: 0;
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  background: var(--wm-base);
+  isolation: isolate;
+}
+.wm-cam {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+  will-change: transform, filter;
+}
+.wm-layer { position: absolute; inset: 0; }
+
+/* ---------- Background: 4-point gradient, rough texture, cast-shadow texture ---------- */
+.wm-bg { position: absolute; inset: -90px; overflow: hidden; }
+.wm-bg-grad {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(85% 55% at 10% 6%, var(--wm-c1) 0%, rgba(0, 0, 0, 0) 72%),
+    radial-gradient(85% 55% at 94% 12%, var(--wm-c2) 0%, rgba(0, 0, 0, 0) 72%),
+    radial-gradient(85% 55% at 6% 94%, var(--wm-c3) 0%, rgba(0, 0, 0, 0) 72%),
+    radial-gradient(85% 55% at 92% 90%, var(--wm-c4) 0%, rgba(0, 0, 0, 0) 72%),
+    var(--wm-base);
+}
+/* Rough paper: blotchy low-frequency mottling. The AE color-burn texture is emulated with a
+   near-white noise multiplied in, which darkens by at most ~10% (color-burn itself crushes).
+   Texture SVGs are base64 so CSS url() rewriting can never break their internal filter refs. */
+.wm-bg-rough {
+  position: absolute;
+  inset: 0;
+  opacity: 0.7;
+  mix-blend-mode: multiply;
+  background-size: 900px 900px;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc5MDAnIGhlaWdodD0nOTAwJz48ZmlsdGVyIGlkPSdyJyB4PScwJyB5PScwJyB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJz48ZmVUdXJidWxlbmNlIHR5cGU9J2ZyYWN0YWxOb2lzZScgYmFzZUZyZXF1ZW5jeT0nMC4wMDQgMC4wMDYnIG51bU9jdGF2ZXM9JzMnIHNlZWQ9JzcnIHN0aXRjaFRpbGVzPSdzdGl0Y2gnLz48ZmVDb2xvck1hdHJpeCB0eXBlPSdzYXR1cmF0ZScgdmFsdWVzPScwJy8+PGZlQ29tcG9uZW50VHJhbnNmZXI+PGZlRnVuY1IgdHlwZT0nbGluZWFyJyBzbG9wZT0nMC4zNCcgaW50ZXJjZXB0PScwLjcyJy8+PGZlRnVuY0cgdHlwZT0nbGluZWFyJyBzbG9wZT0nMC4zNCcgaW50ZXJjZXB0PScwLjcxJy8+PGZlRnVuY0IgdHlwZT0nbGluZWFyJyBzbG9wZT0nMC4zNCcgaW50ZXJjZXB0PScwLjY5Jy8+PGZlRnVuY0EgdHlwZT0nbGluZWFyJyBzbG9wZT0nMCcgaW50ZXJjZXB0PScxJy8+PC9mZUNvbXBvbmVudFRyYW5zZmVyPjwvZmlsdGVyPjxyZWN0IHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbGw9JyNmZmYnIGZpbHRlcj0ndXJsKCNyKScvPjwvc3ZnPg==");
+}
+/* Cast-shadow texture: soft window-blind stripes plus one broad diagonal band */
+.wm-bg-blinds {
+  position: absolute;
+  inset: -10%;
+  opacity: 0.38;
+  mix-blend-mode: multiply;
+  filter: blur(26px);
+  transform: rotate(var(--wm-blind-angle, -9deg));
+  background:
+    linear-gradient(118deg, rgba(0, 0, 0, 0) 26%, rgba(38, 30, 24, 0.75) 44%, rgba(38, 30, 24, 0.55) 52%, rgba(0, 0, 0, 0) 68%),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0) 0 64px, rgba(46, 38, 32, 0.55) 64px 118px);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.75) 55%, rgba(0, 0, 0, 0.35) 100%);
+  mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.75) 55%, rgba(0, 0, 0, 0.35) 100%);
+}
+
+/* ---------- Main object ---------- */
+.wm-obj { position: absolute; transform-origin: 50% 50%; }
+.wm-obj-rot, .wm-obj-body, .wm-obj-shadow { position: absolute; inset: 0; }
+.wm-obj-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.wm-obj-shadow { mix-blend-mode: multiply; }
+.wm-obj-shadow img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(0) blur(7px);
+}
+/* Halftone multiply texture clipped to the object's alpha (track-matte equivalent) */
+.wm-obj-tone {
+  position: absolute;
+  inset: 0;
+  opacity: 0.38;
+  mix-blend-mode: multiply;
+  background-image: radial-gradient(circle at center, rgba(20, 16, 12, 0.9) 0 1.25px, rgba(0, 0, 0, 0) 1.8px);
+  background-size: 6px 6px;
+  -webkit-mask-size: contain, 100% 100%;
+  mask-size: contain, 100% 100%;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+/* ---------- Depth elements on the frame edges ---------- */
+.wm-depth { position: absolute; transform-origin: 50% 50%; }
+.wm-depth img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+/* ---------- Complementary text ---------- */
+.wm-word {
+  position: absolute;
+  white-space: nowrap;
+  line-height: 0.92;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding: 0.04em 0.03em 0.08em;
+  /* Plan coordinates: --x/--y is the anchor point, --w the fitting box width. */
+  top: calc(var(--y) - var(--c, 0.52em));
+  width: var(--w);
+}
+.wm-word.center { left: calc(var(--x) - var(--w) / 2); text-align: center; }
+.wm-word.left { left: var(--x); text-align: left; }
+.wm-word.right { left: calc(var(--x) - var(--w)); text-align: right; }
+.wm-hero {
+  font-family: var(--wm-font-hero);
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  background-image: linear-gradient(180deg, var(--wm-gold-top) 12%, var(--wm-gold-bottom) 96%);
+}
+.wm-ghost {
+  font-family: var(--wm-font-hero);
+  font-weight: 400;
+  opacity: 0.5;
+  background-image: linear-gradient(180deg, var(--wm-ghost-top), var(--wm-ghost-bottom));
+}
+.wm-small {
+  font-family: var(--wm-font-text);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  background-image: linear-gradient(180deg, var(--wm-ink-top), var(--wm-ink-bottom));
+}
+.wm-script {
+  --c: 0.72em;
+  font-family: var(--wm-font-script);
+  font-weight: 400;
+  line-height: 1.1;
+  padding: 0.1em 0.25em 0.2em;
+  opacity: 0.45;
+  background-image: linear-gradient(180deg, var(--wm-ink-top), var(--wm-ink-bottom));
+}
+.wm-word.gold { background-image: linear-gradient(180deg, var(--wm-gold-top) 12%, var(--wm-gold-bottom) 96%); }
+.wm-word.ink { background-image: linear-gradient(180deg, var(--wm-ink-top), var(--wm-ink-bottom)); }
+.wm-word.dim { opacity: 0.5; }
+.wm-word.faint { opacity: 0.4; }
+.wm-word.solid { opacity: 1; }
+.wm-word.multiply { mix-blend-mode: multiply; }
+.wm-word.italic { font-style: italic; }
+.wm-word.caps { text-transform: uppercase; }
+
+/* ---------- Accent stroke and panels ---------- */
+.wm-stroke { position: absolute; inset: 0; width: 1080px; height: 1920px; overflow: visible; }
+.wm-stroke.sweep { opacity: 0.25; mix-blend-mode: multiply; filter: blur(22px); }
+.wm-stroke.line { filter: blur(2px); }
+.wm-stroke.zigzag { opacity: 0.3; mix-blend-mode: multiply; filter: blur(10px); }
+.wm-panel {
+  position: absolute;
+  mix-blend-mode: multiply;
+  background: linear-gradient(180deg, #5a4a3b 0%, #2a2119 100%);
+}
+.wm-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  background-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.9) 0 1.5px, rgba(0, 0, 0, 0) 2.1px);
+  background-size: 7px 7px;
+}
+
+/* ---------- Finishing: vignette, edge blur, grain (above the camera) ---------- */
+.wm-post { position: absolute; inset: 0; pointer-events: none; }
+.wm-vignette {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: multiply;
+  background: radial-gradient(ellipse 78% 64% at 50% 47%, rgba(0, 0, 0, 0) 48%, rgba(24, 17, 10, var(--wm-vignette)) 100%);
+}
+.wm-edgeblur {
+  position: absolute;
+  inset: 0;
+  -webkit-backdrop-filter: blur(var(--wm-edge-blur));
+  backdrop-filter: blur(var(--wm-edge-blur));
+  -webkit-mask-image: radial-gradient(ellipse 64% 56% at 50% 48%, rgba(0, 0, 0, 0) 55%, #000 100%);
+  mask-image: radial-gradient(ellipse 64% 56% at 50% 48%, rgba(0, 0, 0, 0) 55%, #000 100%);
+}
+.wm-grain {
+  position: absolute;
+  inset: -60px;
+  opacity: var(--wm-grain);
+  mix-blend-mode: overlay;
+  background-size: 320px 320px;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSczMjAnIGhlaWdodD0nMzIwJz48ZmlsdGVyIGlkPSdnJyB4PScwJyB5PScwJyB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJz48ZmVUdXJidWxlbmNlIHR5cGU9J2ZyYWN0YWxOb2lzZScgYmFzZUZyZXF1ZW5jeT0nMC45JyBudW1PY3RhdmVzPScyJyBzZWVkPSczJyBzdGl0Y2hUaWxlcz0nc3RpdGNoJy8+PGZlQ29sb3JNYXRyaXggdHlwZT0nc2F0dXJhdGUnIHZhbHVlcz0nMCcvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbGw9JyM4MDgwODAnIGZpbHRlcj0ndXJsKCNnKScvPjwvc3ZnPg==");
+}
+
+/* ---------- Talking-head layer and captions (root composition) ---------- */
+.wm-th {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transform-origin: 50% 40%;
+}
+.wm-th video { position: absolute; }
+.wm-cap {
+  position: absolute;
+  left: 60px;
+  right: 60px;
+  top: var(--wm-cap-y);
+  text-align: center;
+  font-family: var(--wm-font-text);
+  font-weight: 600;
+  font-size: var(--wm-cap-size);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--wm-cap-color);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+}
+.wm-hook { position: absolute; left: 0; right: 0; top: 1180px; height: 420px; }
+.wm-hook .hw {
+  position: absolute;
+  font-family: var(--wm-font-text);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 0.85;
+  color: var(--wm-cap-color);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+}
+/* Emphasis caption (captions.style em): one word in the hero face, light gold over footage. */
+.wm-cap.em {
+  top: calc(var(--wm-cap-y) - 0.3 * var(--wm-cap-em-size));
+  font-family: var(--wm-font-hero);
+  font-weight: 400;
+  font-size: var(--wm-cap-em-size);
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  text-shadow: none;
+  transform-origin: 50% 60%;
+}
+.wm-cap.em .wm-cap-t {
+  display: inline-block;
+  padding: 0 0.04em;
+  background: var(--wm-cap-em-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 3px 14px rgba(0, 0, 0, 0.45));
+}
+/* captions.style class "script": a formal-script word inside a caption or the hook. */
+.wm-cap .script, .wm-hook .hw.script {
+  font-family: var(--wm-font-script);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.wm-cap .script { font-size: 1.45em; line-height: 0.6; }

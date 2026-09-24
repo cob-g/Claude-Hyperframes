@@ -1,0 +1,53 @@
+{
+  "title": "Nova 17 Pro (reel)",
+  "format": "portrait",
+  "fps": 60,
+  "copy": [
+    {
+      "text": "Nova 17 Pro",
+      "role": "title"
+    },
+    {
+      "text": "Tomorrow is calling.",
+      "role": "tagline"
+    },
+    {
+      "text": "0% APR for 24 months"
+    },
+    {
+      "text": "from $49.99/mo.",
+      "role": "price"
+    },
+    {
+      "text": "FREE GIFT"
+    },
+    {
+      "text": "Nova Buds Pro"
+    }
+  ],
+  "products": [
+    {
+      "model": "phone",
+      "finish": "blue"
+    },
+    {
+      "model": "phone",
+      "finish": "silver"
+    }
+  ],
+  "palette": {
+    "tagline": "#4f6b9a"
+  },
+  "gift": {
+    "model": "case"
+  },
+  "lockup": {
+    "wordmark": "Nova"
+  },
+  "audio": {
+    "music": "assets/audio/young-trizzy-02.mp3",
+    "musicStart": 13.44,
+    "stinger": "assets/audio/big-cinematic-impact.mp3",
+    "stingerStart": 2.135
+  }
+}

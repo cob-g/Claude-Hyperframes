@@ -22,6 +22,7 @@ For one stage, load the matching local skill:
 | --- | --- |
 | Reels, Shorts, and short advertisements | `short-form-edit` |
 | White minimal / minimal-animation reel look (After Effects style) | `white-minimal-reel` |
+| Apple-style iPhone 17 Pro product promo with 3D phones (After Effects style) | `ip-17-pro-style` |
 | Existing May Shorts example maintenance | `short-form-video` |
 | New motion-graphics video from a brief | `make-a-video` |
 | Website-inspired compositions | `website-to-hyperframes` |
