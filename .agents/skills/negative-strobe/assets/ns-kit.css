@@ -1,0 +1,62 @@
+/* negative strobe kit: the look. A black stage and one piece on it at a time: a baked
+   black-and-white still, a white frame, or a type card. The grade, the negative, the grain, and
+   any blur are baked into the stills by the builder; nothing here filters the picture.
+   See ../SKILL.md. */
+
+.ns-film {
+  --ns-w: 1080px;
+  --ns-h: 1920px;
+  position: relative;
+  width: var(--ns-w);
+  height: var(--ns-h);
+  overflow: hidden;
+  background: #000;
+  -webkit-font-smoothing: antialiased;
+}
+.ns-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+  background: #000;
+}
+/* Every piece fills the stage and is off until its frame. */
+.ns-stage > * {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.ns-still {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.ns-white { background: #fff; }
+
+/* Type card: one word, wide and heavy, ink on paper. ".neg" is its negative. */
+.ns-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: #000;
+  font-family: "NS Archivo", sans-serif;
+  text-align: center;
+}
+.ns-card.neg { background: #000; color: #fff; }
+.ns-card-word {
+  font-weight: 800;
+  font-variation-settings: "wdth" 125;
+  letter-spacing: -0.012em;
+  line-height: 0.92;
+  white-space: nowrap;
+}
+.ns-card-sub {
+  margin-top: 0.9em;
+  font-weight: 600;
+  font-variation-settings: "wdth" 112;
+  letter-spacing: 0.22em;
+  white-space: nowrap;
+}

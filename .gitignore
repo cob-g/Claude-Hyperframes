@@ -38,11 +38,19 @@ Thumbs.db
 !examples/short-form/assets/
 !examples/short-form/assets/*.json
 
-# The white-minimal-reel and ip-17-pro-style skills ship their runtime kits and OFL fonts (no media).
+# The white-minimal-reel, ip-17-pro-style, app-launch-reel, simplicity, negative-strobe, and cutout-strobe skills ship their runtime kits and OFL fonts (no media).
 !.claude/skills/white-minimal-reel/assets/
 !.agents/skills/white-minimal-reel/assets/
 !.claude/skills/ip-17-pro-style/assets/
 !.agents/skills/ip-17-pro-style/assets/
+!.claude/skills/app-launch-reel/assets/
+!.agents/skills/app-launch-reel/assets/
+!.claude/skills/simplicity/assets/
+!.agents/skills/simplicity/assets/
+!.claude/skills/negative-strobe/assets/
+!.agents/skills/negative-strobe/assets/
+!.claude/skills/cutout-strobe/assets/
+!.agents/skills/cutout-strobe/assets/
 
 # Three finished videos explicitly supplied for the public showcase.
 !examples/showcase/curiosity-reel-2.mp4

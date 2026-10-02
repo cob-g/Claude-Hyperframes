@@ -1,0 +1,96 @@
+{
+  "title": "Kept launch reel",
+  "format": "landscape",
+  "fps": 30,
+  "brand": {
+    "name": "Kept",
+    "reel": "Motion reel 2026",
+    "tagline": "Keep only what you use.",
+    "url": "kept.example",
+    "mark": "check"
+  },
+  "palette": {
+    "brand": "#1a76fc",
+    "brand2": "#434dd0",
+    "accent": "#ffc9a8"
+  },
+  "music": {
+    "file": "assets/audio/electro-dreams.mp3",
+    "bpm": 120,
+    "start": 15.03
+  },
+  "sfx": {
+    "whoosh": "assets/audio/sfx/whoosh.mp3",
+    "pop": "assets/audio/sfx/pop.mp3",
+    "tap": "assets/audio/sfx/tap.mp3",
+    "type": "assets/audio/sfx/typing.mp3",
+    "riser": "assets/audio/sfx/riser.mp3",
+    "impact": "assets/audio/sfx/impact.mp3",
+    "success": "assets/audio/sfx/success.mp3",
+    "scan": "assets/audio/sfx/scan.mp3",
+    "shimmer": "assets/audio/sfx/shimmer.mp3"
+  },
+  "scenes": [
+    { "type": "identity", "beats": 4 },
+    {
+      "type": "statement", "beats": 3, "chapter": "Typography",
+      "eyebrow": "Kept · Subscription tracker",
+      "title": ["Stop paying for", "what you *forgot.*"],
+      "ticker": ["12", "13", "14", "15", "16", "17"], "circle": "14"
+    },
+    {
+      "type": "product", "beats": 8, "chapter": "Product",
+      "copy": [
+        { "eyebrow": "One calm list", "title": ["Every subscription,", "in one place."], "sub": "Name, price, renewal date." },
+        { "eyebrow": "Cancel reminders", "title": ["Cancel before", "it renews."], "sub": "Kept tells you, then totals the savings." }
+      ],
+      "app": {
+        "title": "Subscriptions", "subtitle": "Renewing this month", "currency": "$",
+        "hero": { "label": "Monthly total", "badge": "5 active" },
+        "rows": [
+          { "icon": "play", "color": "#ff3b5c", "title": "Streaming", "meta": "Renews in 3 days", "metaColor": "#ff8a3d", "value": 15.49 },
+          { "icon": "cloud", "color": "#2f80ff", "title": "Cloud storage", "meta": "Renews in 6 days", "value": 2.99 },
+          { "icon": "music", "color": "#a259ff", "title": "Music", "meta": "Renews tomorrow", "metaColor": "#ff8a3d", "value": 10.99 },
+          { "icon": "dumbbell", "color": "#12b886", "title": "Gym", "meta": "Renews in 12 days", "value": 39.0 }
+        ]
+      },
+      "steps": [
+        { "at": 2, "do": "add", "index": 0, "row": { "icon": "pen", "color": "#f59f00", "title": "Design tools", "meta": "Renews in 30 days", "value": 12.0 } },
+        { "at": 5, "do": "swap" },
+        { "at": 5.5, "do": "complete", "row": "Gym", "label": "Cancelled", "toast": "Saved $39.00 a month" }
+      ]
+    },
+    {
+      "type": "scan", "beats": 2, "chapter": "Features",
+      "copy": { "eyebrow": "Scan a receipt", "title": ["Snap it.", "~We find the renewal.~"] },
+      "doc": { "vendor": "CLOUDCO", "fields": [ { "label": "Amount due", "value": "$2.99" }, { "label": "Renews on", "value": "Nov 3, 2026" } ] },
+      "tags": [["Amount", "$2.99"], ["Renews", "Nov 3"]]
+    },
+    {
+      "type": "widget", "beats": 2,
+      "copy": { "eyebrow": "Home-screen widgets", "title": ["See what renews", "next, instantly."] },
+      "widget": { "title": "Next renewals", "count": "2", "rows": [ { "title": "Music", "meta": "Tomorrow", "value": "$10.99" }, { "title": "Streaming", "meta": "In 3 days", "value": "$15.49" } ] }
+    },
+    {
+      "type": "stack", "beats": 2,
+      "title": ["Sharp in light *and dark.*"],
+      "cards": [
+        { "icon": "music", "color": "#a259ff", "title": "Music", "meta": "Renews tomorrow", "metaColor": "#ff8a3d", "value": 10.99 },
+        { "icon": "play", "color": "#ff3b5c", "title": "Streaming", "meta": "Renews in 3 days", "metaColor": "#ff8a3d", "value": 15.49 },
+        { "icon": "cloud", "color": "#2f80ff", "title": "Cloud storage", "meta": "Renews in 6 days", "metaColor": "#5b8def", "value": 2.99 }
+      ]
+    },
+    {
+      "type": "lines", "beats": 2,
+      "eyebrow": ["English", "Español", "Français", "Deutsch"],
+      "lines": ["Never pay for what you forgot.", "Nunca pagues lo que olvidaste.", "Ne payez plus ce que vous oubliez.", "Zahle nie wieder für Vergessenes."]
+    },
+    {
+      "type": "manifesto", "beats": 3, "chapter": "Manifesto",
+      "title": ["No bank login.", "~No nonsense.~"],
+      "sub": "Just the subscriptions you actually use.",
+      "pills": [ { "icon": "offline", "text": "Works offline" }, { "icon": "lock", "text": "Private by design" }, { "icon": "block", "text": "Zero tracking" } ]
+    },
+    { "type": "endcard", "beats": 4 }
+  ]
+}

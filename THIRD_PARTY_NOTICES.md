@@ -19,6 +19,25 @@ brand assets remain unchanged; their inclusion does not grant third-party rights
   License 1.1) in its assets/fonts folder, each with its license file. Its builder bundles
   three.js (MIT) from node_modules into each project, keeps the copyright header in the
   bundle, and copies the full license to the project's ip/THREE-LICENSE.txt.
+- The app-launch-reel skill bundles Latin subsets of Inter 4.1 and JetBrains Mono (SIL Open
+  Font License 1.1) in its assets/fonts folder, each with its license file. Its style was
+  measured from a reference reel (motionref.mp4); the skill reproduces the mechanics only and
+  ships no part of that reel's app, name, icon, copy, or audio. Music and sound effects are
+  downloaded per project with provenance records and are never committed.
+- The simplicity skill bundles a Latin subset of Archivo (SIL Open Font License 1.1) in its
+  assets/fonts folder with its license file. Its editing style was measured from a reference
+  reel; the skill reproduces the mechanics only and ships no part of that reel's footage,
+  titles, or song. Music and sound effects are downloaded
+  per project with provenance records and are never committed.
+- The negative-strobe skill bundles a Latin subset of Archivo (SIL Open Font License 1.1) in
+  its assets/fonts folder with its license file. Its editing style was measured from a
+  reference tutorial reel; the skill reproduces the mechanics only and ships no part of that
+  reel's footage, brand marks, or track. Footage, music, and sound effects are downloaded per
+  project with provenance records and are never committed.
+- The cutout-strobe skill bundles no fonts and no media. Its editing style was measured from a
+  reference reel (a guitarist's performance edit); the skill reproduces the mechanics only and
+  ships no part of that reel's footage, performer, or track. Footage, music, and sound effects
+  are downloaded per project with provenance records and are never committed.
 - Vox, Kallaway, and Infinite are aesthetic reference names. These templates are
   not official brand assets or endorsed by those creators or organizations.
 

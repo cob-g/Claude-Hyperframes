@@ -1,0 +1,55 @@
+/* cutout strobe kit: the stage. A film is a stack of sections, one per shot. A wall section is
+   three layers: the shot, a window cut into it that shows a strobing montage, and the shot's
+   subject cut out on top, so the subject holds still while the world behind it changes on every
+   frame. Above the sections sit the whip stills, the white shape of a step, and the flash.
+   See ../SKILL.md. */
+
+.cs-stage {
+  --cs-w: 1920px;
+  --cs-h: 1080px;
+  --cs-glow: none;
+  position: relative;
+  width: var(--cs-w);
+  height: var(--cs-h);
+  overflow: hidden;
+  background: #000;
+}
+.cs-frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+.cs-frame > * { position: absolute; inset: 0; }
+
+/* A section is hidden until its first frame (or the step that previews it). */
+.cs-sec { opacity: 0; }
+.cs-sec > * { position: absolute; inset: 0; }
+.cs-base video, .cs-hero video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.cs-base { transform-origin: 50% 50%; }
+/* The shot goes grey behind a subject that keeps its colour. */
+.cs-base.mono { filter: grayscale(1) contrast(1.08) brightness(0.92); }
+
+/* The window: its outline is a clip-path set per frame; its pictures switch on and off. */
+.cs-win { overflow: hidden; background: #000; }
+.cs-win img, .cs-whip {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+}
+
+/* The subject, with a soft halo that lifts it off the montage. One frame of white is the same
+   layer through brightness(0) invert(1). */
+.cs-hero { filter: var(--cs-glow); }
+
+.cs-white, .cs-flash { background: #fff; opacity: 0; }

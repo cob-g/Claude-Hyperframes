@@ -1,0 +1,112 @@
+/* simplicity kit: the look of the film. Full frame at 1920x1080; sizes measured in the
+   reference's 912 px wide film are multiplied by --u (the builder sets it to 1920/912 px).
+   Only the footage, its effects, and one small extended-type film title. See ../SKILL.md. */
+
+.simp-film {
+  --u: 2.105263px;
+  --simp-film-title: #ffffff;
+  --simp-w: 1920px;
+  --simp-h: 1080px;
+  position: relative;
+  width: var(--simp-w);
+  height: var(--simp-h);
+  overflow: hidden;
+  background: #000;
+  -webkit-font-smoothing: antialiased;
+}
+.simp-frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+.simp-frame > * { position: absolute; inset: 0; }
+.simp-shot { overflow: hidden; transform-origin: 50% 50%; }
+.simp-shot video, .simp-matte video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.simp-still, .simp-cut, .simp-glow-mask { opacity: 0; }
+.simp-still { width: 100%; height: 100%; object-fit: cover; }
+
+/* Glow: a subject lit to pure white with a soft bloom, one or two frames at a time. */
+.simp-glow-mask {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0) invert(1) blur(calc(1.2 * var(--u))) drop-shadow(0 0 calc(7 * var(--u)) rgba(255, 255, 255, 0.95)) drop-shadow(0 0 calc(22 * var(--u)) rgba(255, 255, 255, 0.7));
+}
+.simp-frame > .simp-spot {
+  inset: auto;
+  opacity: 0;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, #fff 0 58%, rgba(255, 255, 255, 0.85) 72%, rgba(255, 255, 255, 0) 100%);
+  filter: blur(calc(2 * var(--u))) drop-shadow(0 0 calc(14 * var(--u)) rgba(255, 255, 255, 0.9));
+}
+/* Cutout: the next shot's subject, in place, over everything (the title included). */
+.simp-cut { width: 100%; height: 100%; object-fit: cover; }
+.simp-cut.white {
+  filter: brightness(0) invert(1) blur(calc(0.8 * var(--u))) drop-shadow(0 0 calc(8 * var(--u)) rgba(255, 255, 255, 0.95)) drop-shadow(0 0 calc(26 * var(--u)) rgba(255, 255, 255, 0.65));
+}
+
+/* Tiles: the next shot arriving as a mosaic of hard-edged rectangles. */
+.simp-frame > .simp-tile {
+  inset: auto;
+  opacity: 0;
+  background-repeat: no-repeat;
+  background-size: var(--simp-w) var(--simp-h);
+}
+
+/* The closing fade to black (film.fadeOut). */
+.simp-fadeout { background: #000; opacity: 0; }
+
+/* ------------------------------------------------------------------ film title */
+.simp-title {
+  pointer-events: none;
+  font-family: "SIMP Archivo", sans-serif;
+  color: var(--simp-film-title);
+  text-shadow: 0 var(--u) calc(2 * var(--u)) rgba(0, 0, 0, 0.3), 0 0 calc(16 * var(--u)) rgba(0, 0, 0, 0.14);
+}
+.simp-tblock {
+  position: absolute;
+  top: 50%;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(-50%);
+}
+.simp-tblock.l { left: 8.4%; align-items: flex-start; }
+.simp-tblock.r { right: 8.4%; align-items: flex-end; }
+.simp-tkick {
+  font-size: calc(12 * var(--u));
+  line-height: calc(12 * var(--u));
+  font-weight: 600;
+  font-variation-settings: "wdth" 112;
+  letter-spacing: 0.04em;
+  margin: 0 0 calc(3 * var(--u)) 0;
+  opacity: 0.92;
+  white-space: nowrap;
+}
+.simp-tblock.l .simp-tkick { margin-left: calc(30 * var(--u)); }
+.simp-tword {
+  display: flex;
+  align-items: center;
+  font-size: calc(37 * var(--u));
+  line-height: calc(34 * var(--u));
+  font-weight: 760;
+  font-variation-settings: "wdth" 125;
+  letter-spacing: 0.012em;
+  white-space: nowrap;
+}
+.simp-tword i { font-style: normal; display: inline-block; }
+.simp-tplus {
+  font-size: calc(17 * var(--u));
+  font-weight: 300;
+  font-variation-settings: "wdth" 100;
+  letter-spacing: -0.06em;
+  opacity: 0.85;
+  margin: 0 calc(7 * var(--u));
+}

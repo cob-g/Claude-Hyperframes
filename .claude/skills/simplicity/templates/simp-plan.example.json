@@ -1,0 +1,197 @@
+{
+  "title": "Birthday",
+  "fps": 24,
+  "film": {
+    "grade": "cream",
+    "behind": true,
+    "title": {
+      "left": {
+        "kicker": "JUNE 13",
+        "word": "BIRTHDAY"
+      },
+      "right": {
+        "kicker": "POCKET 3",
+        "word": "VLOG"
+      },
+      "at": 1,
+      "gap": 8
+    }
+  },
+  "music": {
+    "file": "assets/audio/song.mp3",
+    "title": "Song title",
+    "start": 0,
+    "drop": 200,
+    "dropout": {
+      "at": 194,
+      "frames": 6
+    }
+  },
+  "sfx": {
+    "shutter": "assets/audio/shutter.mp3",
+    "click": "assets/audio/click.mp3",
+    "pop": "assets/audio/pop.mp3",
+    "swoosh": "assets/audio/swoosh.mp3",
+    "sparkle": {
+      "file": "assets/audio/chime.mp3",
+      "len": 0.3,
+      "gain": 0.3
+    }
+  },
+  "shots": [
+    {
+      "src": "assets/footage/establishing-wide.mp4",
+      "in": 2.0,
+      "frames": 20,
+      "label": "TITLE ANIMATION"
+    },
+    {
+      "burst": [
+        {
+          "src": "assets/footage/detail-a.mp4",
+          "in": 1.0
+        },
+        {
+          "src": "assets/footage/detail-b.mp4",
+          "in": 1.0
+        },
+        {
+          "src": "assets/footage/detail-c.mp4",
+          "in": 1.0
+        },
+        {
+          "src": "assets/footage/detail-d.mp4",
+          "in": 1.0
+        },
+        {
+          "src": "assets/footage/detail-e.mp4",
+          "in": 1.0
+        }
+      ],
+      "each": 2,
+      "label": "1 FRAME CLIPS"
+    },
+    {
+      "src": "assets/footage/table-topdown.mp4",
+      "in": 3.0,
+      "frames": 28,
+      "behind": false,
+      "label": "SUBJECT FLICKER GLOW",
+      "fx": [
+        {
+          "type": "glow",
+          "at": 3,
+          "hops": [
+            {
+              "spot": [
+                0.3,
+                0.3,
+                0.1,
+                0.16
+              ],
+              "frames": 2
+            },
+            {
+              "spot": [
+                0.55,
+                0.4,
+                0.1,
+                0.16
+              ],
+              "frames": 2
+            },
+            {
+              "spot": [
+                0.2,
+                0.55,
+                0.1,
+                0.16
+              ],
+              "frames": 2,
+              "gap": 1
+            },
+            {
+              "spot": [
+                0.65,
+                0.6,
+                0.1,
+                0.16
+              ],
+              "frames": 2
+            }
+          ]
+        }
+      ],
+      "exit": {
+        "type": "cutout",
+        "frames": 3,
+        "label": "CUT OUT TRANSITION"
+      }
+    },
+    {
+      "src": "assets/footage/selfie.mp4",
+      "in": 4.0,
+      "frames": 22,
+      "exit": {
+        "type": "stutter",
+        "frames": 5,
+        "label": "STUTTER EFFECT"
+      }
+    },
+    {
+      "src": "assets/footage/selfie.mp4",
+      "in": 9.0,
+      "frames": 24,
+      "exit": {
+        "type": "tiles",
+        "frames": 18,
+        "cols": 4,
+        "rows": 3,
+        "label": "TILE EFFECT"
+      }
+    },
+    {
+      "src": "assets/footage/sign-wide.mp4",
+      "in": 1.0,
+      "frames": 22,
+      "label": "SUBJECT FLICKER 5X",
+      "fx": [
+        {
+          "type": "glow",
+          "at": 3,
+          "count": 5,
+          "each": 1,
+          "gap": 1
+        }
+      ],
+      "exit": {
+        "type": "cutout",
+        "frames": 3,
+        "style": "white",
+        "label": "GLOW + CUTOUT TRANSITION"
+      }
+    },
+    {
+      "src": "assets/footage/counter.mp4",
+      "in": 2.0,
+      "frames": 26
+    },
+    {
+      "src": "assets/footage/cafe-wide-locked.mp4",
+      "in": 5.0,
+      "frames": 56,
+      "label": "STUTTER TELEPORT EFFECT",
+      "fx": [
+        {
+          "type": "teleport",
+          "at": 4,
+          "frames": 9,
+          "plate": {
+            "in": 0.5
+          },
+          "pattern": "PPLPLLPLP"
+        }
+      ]
+    }
+  ]
+}

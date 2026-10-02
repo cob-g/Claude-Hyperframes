@@ -23,6 +23,10 @@ For one stage, load the matching local skill:
 | Reels, Shorts, and short advertisements | `short-form-edit` |
 | White minimal / minimal-animation reel look (After Effects style) | `white-minimal-reel` |
 | Apple-style iPhone 17 Pro product promo with 3D phones (After Effects style) | `ip-17-pro-style` |
+| Chaptered app / product launch reel (15-60 s): HUD, beat-grid cuts, live phone demo, synced sound design | `app-launch-reel` |
+| Clean, luxurious short edit (film only): cream grade, frame-level glow / stutter / cutout / tile tricks, extended film title, song-led cut; also music-video chorus cuts | `simplicity` |
+| Black-and-white strobe edit: one-to-four-frame pieces flipped between positive and negative, blown-out silhouettes, stepped zooms, bass-led mix on the beat grid; also a hard "glitch" transition | `negative-strobe` |
+| Performance edit with the subject cut out over a strobing montage: shaped windows (slit, blinds, X, disc), white silhouette steps, backbeat flashes, cuts locked to the bass dropping in and out; musician, dancer, and artist promos | `cutout-strobe` |
 | Existing May Shorts example maintenance | `short-form-video` |
 | New motion-graphics video from a brief | `make-a-video` |
 | Website-inspired compositions | `website-to-hyperframes` |

@@ -1,0 +1,228 @@
+{
+  "title": "Night run",
+  "fps": 24,
+  "format": "portrait",
+  "look": {
+    "grade": "ink",
+    "grain": 9
+  },
+  "clips": {
+    "texture": {
+      "src": "assets/footage/fabric-macro.mp4",
+      "in": 4.0,
+      "pivot": 0.25,
+      "grade": "stamp"
+    },
+    "portrait": {
+      "src": "assets/footage/head-from-behind.mp4",
+      "in": 2.0
+    },
+    "mark": {
+      "src": "assets/footage/logo-on-sleeve.mp4",
+      "in": 1.0,
+      "zoom": 1.3,
+      "grade": "stamp"
+    },
+    "figure": {
+      "src": "assets/footage/figure-against-sky.mp4",
+      "in": 4.0,
+      "focus": [0.3, 0.5]
+    },
+    "wide": {
+      "src": "assets/footage/figure-on-ridge.mp4",
+      "in": 2.0,
+      "zoom": 1.5,
+      "focus": [0.44, 0.47]
+    },
+    "action": {
+      "src": "assets/footage/jump.mp4",
+      "in": 1.5
+    }
+  },
+  "music": {
+    "file": "assets/audio/bed.mp3",
+    "title": "Track name",
+    "start": 33.984,
+    "grid": {
+      "bpm": 122,
+      "downbeat": 0.542
+    }
+  },
+  "sfx": {
+    "hit": "assets/audio/hit.mp3",
+    "tick": "assets/audio/tick.mp3",
+    "flip": "assets/audio/shutter.mp3",
+    "buzz": "assets/audio/static.mp3",
+    "rise": "assets/audio/riser.mp3"
+  },
+  "timeline": [
+    {
+      "clip": "texture",
+      "pattern": "TtT",
+      "each": 2,
+      "step": 6,
+      "label": "open: texture"
+    },
+    {
+      "black": 2,
+      "to": "16th"
+    },
+    {
+      "clip": "portrait",
+      "at": 0,
+      "pattern": "PN",
+      "each": 4,
+      "step": 6,
+      "label": "statement"
+    },
+    {
+      "clip": "mark",
+      "pattern": "T",
+      "each": 4,
+      "blurIn": 1,
+      "to": "beat",
+      "label": "the mark, soft then sharp"
+    },
+    {
+      "clip": "figure",
+      "at": 0,
+      "pattern": "GPN",
+      "each": [2, 4, 4],
+      "label": "grey breath, then ink"
+    },
+    {
+      "clip": "figure",
+      "pattern": "P",
+      "each": 2,
+      "punch": [1.18],
+      "to": "bar"
+    },
+    {
+      "burst": ["texture", "portrait", "mark", "figure", "wide", "figure"],
+      "on": "grid",
+      "rise": true,
+      "label": "burst 1"
+    },
+    {
+      "clip": "figure",
+      "pattern": "PN",
+      "each": 4,
+      "step": 6,
+      "label": "subject"
+    },
+    {
+      "clip": "wide",
+      "pattern": "PN",
+      "each": 4,
+      "punch": [1, 1.25]
+    },
+    {
+      "clip": "figure",
+      "pattern": "TtT",
+      "each": [2, 2, 4],
+      "step": 8,
+      "to": "bar"
+    },
+    {
+      "clip": "action",
+      "at": 0,
+      "pattern": "P",
+      "each": 4,
+      "label": "action: the wind-up"
+    },
+    {
+      "clip": "action",
+      "at": 21,
+      "pattern": "PN",
+      "each": 4,
+      "step": 6,
+      "label": "the take-off"
+    },
+    {
+      "clip": "action",
+      "at": 36,
+      "pattern": "TPN",
+      "each": [2, 2, 4],
+      "step": 5,
+      "label": "the peak"
+    },
+    {
+      "clip": "action",
+      "pattern": "P",
+      "each": 4,
+      "shift": [
+        [0, 0],
+        [4, -3]
+      ],
+      "to": "bar"
+    },
+    {
+      "burst": [
+        "action",
+        "figure",
+        "action",
+        {
+          "clip": "mark",
+          "pieces": 3
+        },
+        "action",
+        "portrait",
+        "action",
+        "wide"
+      ],
+      "on": "grid",
+      "rise": true,
+      "label": "burst 2: the jump in flashes"
+    },
+    {
+      "clip": "action",
+      "pattern": "PNP",
+      "each": 4,
+      "step": 4,
+      "label": "the landing"
+    },
+    {
+      "clip": "wide",
+      "at": 40,
+      "pattern": "G",
+      "each": 4,
+      "step": 0,
+      "to": "bar",
+      "label": "grey breath"
+    },
+    {
+      "clip": "wide",
+      "at": 60,
+      "pattern": "PN",
+      "each": 2,
+      "step": 0,
+      "label": "payoff"
+    },
+    {
+      "clip": "wide",
+      "pattern": "P",
+      "each": 8,
+      "step": 0
+    },
+    {
+      "clip": "wide",
+      "pattern": "NPN",
+      "each": [2, 2, 4],
+      "step": 0,
+      "punch": [1.2, 1.45, 1.75]
+    },
+    {
+      "clip": "wide",
+      "pattern": "PN",
+      "each": 4,
+      "step": 0,
+      "punch": [1.75, 1.75, 2.1, 2.1, 2.5, 2.5],
+      "to": "bar",
+      "label": "step in to the bar line"
+    },
+    {
+      "black": 6,
+      "mute": true
+    }
+  ]
+}

@@ -1,0 +1,306 @@
+{
+  "title": "Night session",
+  "fps": 30,
+  "format": "landscape",
+  "seed": 11,
+  "look": {
+    "grade": "steel",
+    "glow": "#ffffff"
+  },
+  "clips": {
+    "wide": {
+      "src": "assets/footage/wide.mp4",
+      "in": 6.0
+    },
+    "low-angle": {
+      "src": "assets/footage/low-angle.mp4",
+      "in": 4.0
+    },
+    "medium": {
+      "src": "assets/footage/medium.mp4",
+      "in": 5.0
+    },
+    "portrait": {
+      "src": "assets/footage/portrait.mp4",
+      "in": 8.0
+    },
+    "feet": {
+      "src": "assets/footage/feet.mp4",
+      "in": 1.0
+    },
+    "stage-wide": {
+      "src": "assets/footage/stage-wide.mp4",
+      "in": 6.0
+    },
+    "stage-low": {
+      "src": "assets/footage/stage-low.mp4",
+      "in": 4.0
+    },
+    "hands": {
+      "src": "assets/footage/hands.mp4",
+      "in": 5.0
+    },
+    "alley-wide": {
+      "src": "assets/footage/alley-wide.mp4",
+      "in": 6.0
+    },
+    "alley-close": {
+      "src": "assets/footage/alley-close.mp4",
+      "in": 7.0
+    },
+    "roof-low": {
+      "src": "assets/footage/roof-low.mp4",
+      "in": 6.0
+    },
+    "roof-wide": {
+      "src": "assets/footage/roof-wide.mp4",
+      "in": 8.0
+    },
+    "instrument": {
+      "src": "assets/footage/instrument.mp4",
+      "in": 3.0
+    }
+  },
+  "music": {
+    "file": "assets/audio/bed.mp3",
+    "title": "Track name",
+    "start": 11.52
+  },
+  "sfx": {
+    "hit": "assets/audio/hit.mp3",
+    "tick": "assets/audio/tick.mp3",
+    "whip": "assets/audio/whip.mp3",
+    "rise": "assets/audio/rise.mp3"
+  },
+  "timeline": [
+    {
+      "wall": "wide",
+      "until": 99,
+      "window": {
+        "shape": "slit",
+        "from": 1,
+        "to": 0.05
+      },
+      "montage": [
+        "low-angle",
+        "medium",
+        "feet",
+        "stage-low",
+        "instrument",
+        "roof-low"
+      ],
+      "label": "intro: the slit closes over the build"
+    },
+    {
+      "step": "hero",
+      "until": 115,
+      "each": 5,
+      "label": "three silhouettes of the next subject"
+    },
+    {
+      "wall": "low-angle",
+      "until": 152,
+      "rise": true,
+      "window": {
+        "shape": "blinds",
+        "count": 5,
+        "from": 1,
+        "to": 0,
+        "over": 28
+      },
+      "montage": [
+        "wide",
+        "feet",
+        "stage-wide",
+        "alley-wide",
+        "roof-wide",
+        "medium"
+      ],
+      "label": "the bass lands: blinds close over the first wall"
+    },
+    {
+      "step": "bars",
+      "until": 173,
+      "each": 4,
+      "label": "bars, then the next subject"
+    },
+    {
+      "wall": "stage-low",
+      "until": 201,
+      "window": {
+        "shape": "slit",
+        "from": 0.34,
+        "to": 0.34
+      },
+      "montage": [
+        "wide",
+        "low-angle",
+        "instrument",
+        "feet",
+        "roof-low",
+        "roof-wide"
+      ],
+      "label": "a slit behind the subject"
+    },
+    {
+      "shot": "hands",
+      "until": 230,
+      "enter": "flash",
+      "label": "flash to a detail"
+    },
+    {
+      "wall": "stage-wide",
+      "until": 255,
+      "enter": "whip",
+      "window": {
+        "shape": "cross",
+        "from": 52,
+        "to": 0
+      },
+      "montage": [
+        "low-angle",
+        "medium",
+        "instrument",
+        "roof-low",
+        "feet",
+        "portrait"
+      ],
+      "label": "the X shuts to a bar"
+    },
+    {
+      "step": "circle",
+      "until": 273,
+      "each": 5,
+      "label": "a disc, then the next subject steps out of it"
+    },
+    {
+      "wall": "alley-wide",
+      "until": 331,
+      "window": {
+        "shape": "circle",
+        "from": 0.08,
+        "to": 1.05
+      },
+      "montage": [
+        "instrument",
+        "low-angle",
+        "stage-low",
+        "feet",
+        "roof-low",
+        "medium"
+      ],
+      "flash": [
+        29
+      ],
+      "label": "the disc grows to the whole frame"
+    },
+    {
+      "wall": "portrait",
+      "until": 383,
+      "enter": "whip",
+      "whip": "v",
+      "base": "mono",
+      "window": {
+        "shape": "quad",
+        "corner": "tr",
+        "from": 0,
+        "to": 1,
+        "over": 26
+      },
+      "montage": [
+        "wide",
+        "alley-wide",
+        "stage-wide",
+        "roof-wide",
+        "feet",
+        "low-angle"
+      ],
+      "flash": [
+        29
+      ],
+      "label": "colour subject on a grey shot, a panel that takes the frame"
+    },
+    {
+      "step": "columns",
+      "until": 403,
+      "each": 5,
+      "label": "four columns"
+    },
+    {
+      "wall": "alley-close",
+      "until": 461,
+      "enter": "flash",
+      "window": "full",
+      "montage": [
+        "wide",
+        "low-angle",
+        "stage-low",
+        "medium",
+        "roof-low",
+        "roof-wide",
+        "feet"
+      ],
+      "flash": [
+        29
+      ],
+      "label": "full montage behind the subject"
+    },
+    {
+      "wall": "roof-low",
+      "until": 486,
+      "enter": "whip",
+      "whip": "v",
+      "window": {
+        "shape": "blinds",
+        "count": 6,
+        "from": 1,
+        "to": 0.34
+      },
+      "montage": [
+        "wide",
+        "medium",
+        "instrument",
+        "stage-low",
+        "feet",
+        "low-angle"
+      ],
+      "label": "blinds"
+    },
+    {
+      "step": "hero",
+      "until": 504,
+      "each": 5,
+      "label": "the wide subject, small, in white"
+    },
+    {
+      "wall": "wide",
+      "in": 12.0,
+      "until": 562,
+      "window": {
+        "shape": "circle",
+        "from": 0.06,
+        "to": 1.05,
+        "over": 44
+      },
+      "montage": [
+        "low-angle",
+        "medium",
+        "portrait",
+        "stage-low",
+        "instrument",
+        "roof-low",
+        "feet"
+      ],
+      "flash": [
+        29
+      ],
+      "label": "payoff: the disc opens round the first subject"
+    },
+    {
+      "shot": "feet",
+      "until": 576,
+      "enter": "flash",
+      "label": "end on a detail"
+    }
+  ]
+}
